@@ -46,7 +46,13 @@ public class Day5 {
         for (Integer val : middleValues){
             sum += val;
         }
+        List<Integer> middleValuesAfterSorting = getMiddleValuesAfterSorting(rulesMap, updatesList);
+        int sum2 = 0;
+        for (Integer val : middleValuesAfterSorting){
+            sum2 += val;
+        }
         System.out.println("1: " + sum);
+        System.out.println("2: " + sum2);
     }
     // Part 1
     public static List<Integer> getMiddleValues(Map<Integer, Set<Integer>> rulesMap, List<List<Integer>> updatesList){
@@ -68,5 +74,38 @@ public class Day5 {
             }
         }
         return true;
+    }
+
+    // Part 2 for incorrectly-ordered updates
+    public static List<Integer> getMiddleValuesAfterSorting(Map <Integer, Set<Integer>> rulesMap, List<List<Integer>> updatesList) {
+        List<Integer> middleValues = new ArrayList<>();
+        for (List<Integer> list : updatesList){
+            if (!isCorrectlyOrdered(list, rulesMap)){
+                List<Integer> temp = sortIncorrectList(list, rulesMap);
+                middleValues.add(temp.get(temp.size()/2));
+            }
+        }
+        return middleValues;
+    }
+    public static List<Integer> sortIncorrectList(List<Integer> updatesList, Map <Integer, Set<Integer>> rulesMap){
+        int[] updatesArr = new int[updatesList.size()];
+        for (int i = 0; i < updatesArr.length; i++){
+            updatesArr[i] = updatesList.get(i);
+        }
+        for (int i = 0; i < updatesArr.length; i++){
+            for (int j = 0; j < updatesArr.length-1; j++){
+                Set<Integer> rules = rulesMap.get(updatesArr[j]);
+                if (rules == null || !rules.contains(updatesArr[j+1])) {
+                    int temp = updatesArr[j+1];
+                    updatesArr[j+1] = updatesArr[j];
+                    updatesArr[j] = temp;
+                }
+            }
+        }
+        List<Integer> correctList = new ArrayList<>();
+        for (int i = 0; i < updatesArr.length; i++){
+            correctList.add(updatesArr[i]);
+        }
+        return correctList;
     }
 }
